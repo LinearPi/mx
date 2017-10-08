@@ -71,7 +71,7 @@ class AddUserAskView(View):
             return HttpResponse('{"status":"fail","msg": "添加出错"}', content_type='application/json')
 
 
-class OrgHomeVies(View):
+class OrgHomeView(View):
     """
     机构首页
     """
@@ -85,22 +85,56 @@ class OrgHomeVies(View):
             "all_teachers": all_teachers,
             "course_org": course_org,
             "current_page": current_page,
-
         })
-#
-# class OrgCourseVies(View):
-#     """
-#     机构首页
-#     """
-#     def get(self, request, org_id):
-#         current_page = "course"
-#         course_org = CourseOrg.objects.get(id= int(org_id))
-#         all_courses = course_org.course_set.all()[:3]
-#         all_teachers = course_org.teacher_set.all()[:1]
-#         return render(request, 'org-detail-homepage.html',{
-#             "all_courses": all_courses,
-#             "all_teachers": all_teachers,
-#             "course_org": course_org,
-#             "current_page": current_page,
-#
-#         })
+
+
+class OrgCourseView(View):
+    """
+    机构课程列表
+    """
+    def get(self, request, org_id):
+        current_page = "course"
+        course_org = CourseOrg.objects.get(id= int(org_id))
+        all_courses = course_org.course_set.all()
+        return render(request, 'org-detail-course.html',{
+            "all_courses": all_courses,
+            "course_org": course_org,
+            "current_page": current_page,
+        })
+
+
+class OrgDescView(View):
+    """
+    机构介绍页
+    """
+    def get(self, request, org_id):
+        current_page = "desc"
+        course_org = CourseOrg.objects.get(id= int(org_id))
+        return render(request, 'org-detail-desc.html',{
+            "course_org": course_org,
+            "current_page": current_page,
+        })
+
+
+class OrgTeacherView(View):
+    """
+    机构教师列表
+    """
+    def get(self, request, org_id):
+        current_page = "teacher"
+        course_org = CourseOrg.objects.get(id= int(org_id))
+        all_teacher = course_org.teacher_set.all()
+        return render(request, 'org-detail-teachers.html',{
+            "all_teacher": all_teacher,
+            "course_org": course_org,
+            "current_page": current_page,
+        })
+
+
+class AddFavView(View):
+    """
+    用户收藏
+    """
+    def post(self, request):
+        fav_id = request.POST.get('fav_id', '')
+        fav_type = request.POST.get('fav_type', '')
