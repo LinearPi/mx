@@ -6,7 +6,8 @@ from pure_pagination import Paginator, PageNotAnInteger
 
 
 from .models import Course, CourseResource
-from operation.models import UserFavorite, CourseComments
+from operation.models import UserFavorite, CourseComments, UserCourse
+from utils.mixin_utils import LoginRequiredMixin
 # Create your views here.
 
 
@@ -75,19 +76,32 @@ class CourseDetailView(View):
 
         })
 
-class CourseInfoView(View):
+class CourseInfoView(LoginRequiredMixin, View):
     """
     课程章节信息
     """
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
-        all_resource = CourseResource.objects.filter(course=course)
+        user_courses = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_courses:
+            user_course = UserCourse(user=request.user, course=course)
+            user_course.save()
+
+        user_courses = UserCourse.objects.filter(course= course)
+        user_ids = [user_courses.user.id for user_courses in user_courses]
+        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        # 取出所有课程的id
+        course_ids = [user_courses.course.id for user_courses in all_user_courses]
+        # 获取学过课程倒叙排列
+        relate_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+        all_resource = CourseResource.objects.filter(course= course)
         return render(request, "course-video.html", {
             "course": course,
             "all_resource": all_resource,
+            "relate_courses": relate_courses,
             })
 
-class CommentsView(View):
+class CommentsView(LoginRequiredMixin, View):
     """
     课程章节信息
     """
@@ -101,14 +115,17 @@ class CommentsView(View):
             "all_comments": all_comments,
             })
 
-class AddCommentView(View):
-    # 用户添加课程评论
+class AddCommentsView(View):
+    """
+    用户添加课程评论
+    """
     def post(self, request):
         if not request.user.is_authenticated():
-            # 判断用户登录状态
-            return HttpResponse('{"status":"fail","msg": "用户未登录"}', content_type='application/json')
-        course_id = request.POST.get('course_id', 0)
-        comments = request.POST.get('comments', "")
+            #判断用户登录状态
+            return HttpResponse('{"status":"fail", "msg":"用户未登录"}', content_type='application/json')
+
+        course_id = request.POST.get("course_id", 0)
+        comments = request.POST.get("comments", "")
         if course_id >0 and comments:
             course_comments = CourseComments()
             course = Course.objects.get(id=int(course_id))
@@ -116,6 +133,6 @@ class AddCommentView(View):
             course_comments.comments = comments
             course_comments.user = request.user
             course_comments.save()
-            return HttpResponse('{"status":"success","msg": "添加成功"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "msg":"添加成功"}', content_type='application/json')
         else:
-            return HttpResponse('{"status":"fail","msg": "添加失败"}', content_type='application/json')
+            return HttpResponse('{"status":"fail", "msg":"添加失败"}', content_type='application/json')
