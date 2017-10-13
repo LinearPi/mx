@@ -3,10 +3,12 @@ from django.shortcuts import render
 from django.views.generic import View
 from django.http import HttpResponse
 from pure_pagination import Paginator, PageNotAnInteger
+from django.db.models import Q
 
 from .form import UserAskForm
-from .models import CourseOrg, CityDict
+from .models import CourseOrg, CityDict, Teacher
 from operation.models import UserFavorite
+from courses.models import Course
 # Create your views here.
 
 
@@ -16,6 +18,11 @@ class OrgView(View):
         hot_orgs = all_orgs.order_by("-click_nums")[:3]
 
         all_city = CityDict.objects.all()
+
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_orgs = all_orgs.filter(Q(name__icontains=search_keywords)|
+                                        Q(desc__icontains=search_keywords))
 
         # 取出筛选城市
         city_id = request.GET.get('city', "")
@@ -29,15 +36,13 @@ class OrgView(View):
 
         org_nums = all_orgs.count()
 
-
+        # 排序
         sort = request.GET.get('sort', "")
         if sort:
             if sort == "students":
                 all_orgs = all_orgs.order_by("-students")
             elif sort == "courses":
                 all_orgs = all_orgs.order_by("-course_nums")
-
-
 
         # 对课程机构进行分页
         try:
@@ -59,6 +64,7 @@ class OrgView(View):
             "sort": sort,
         })
 
+
 class AddUserAskView(View):
     """
     用户添加资讯
@@ -78,14 +84,14 @@ class OrgHomeView(View):
     """
     def get(self, request, org_id):
         current_page = "home"
-        course_org = CourseOrg.objects.get(id= int(org_id))
+        course_org = CourseOrg.objects.get(id=int(org_id))
         has_fav = False
         if request.user.is_authenticated():
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
                 has_fav = True
         all_courses = course_org.course_set.all()[:3]
         all_teachers = course_org.teacher_set.all()[:1]
-        return render(request, 'org-detail-homepage.html',{
+        return render(request, 'org-detail-homepage.html', {
             "all_courses": all_courses,
             "all_teachers": all_teachers,
             "course_org": course_org,
@@ -100,13 +106,13 @@ class OrgCourseView(View):
     """
     def get(self, request, org_id):
         current_page = "course"
-        course_org = CourseOrg.objects.get(id= int(org_id))
+        course_org = CourseOrg.objects.get(id=int(org_id))
         has_fav = False
         if request.user.is_authenticated():
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
                 has_fav = True
         all_courses = course_org.course_set.all()
-        return render(request, 'org-detail-course.html',{
+        return render(request, 'org-detail-course.html', {
             "all_courses": all_courses,
             "course_org": course_org,
             "current_page": current_page,
@@ -121,12 +127,12 @@ class OrgDescView(View):
     """
     def get(self, request, org_id):
         current_page = "desc"
-        course_org = CourseOrg.objects.get(id= int(org_id))
+        course_org = CourseOrg.objects.get(id=int(org_id))
         has_fav = False
         if request.user.is_authenticated():
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
                 has_fav = True
-        return render(request, 'org-detail-desc.html',{
+        return render(request, 'org-detail-desc.html', {
             "course_org": course_org,
             "current_page": current_page,
             "has_fav": has_fav,
@@ -140,13 +146,13 @@ class OrgTeacherView(View):
     """
     def get(self, request, org_id):
         current_page = "teacher"
-        course_org = CourseOrg.objects.get(id= int(org_id))
+        course_org = CourseOrg.objects.get(id=int(org_id))
         has_fav = False
         if request.user.is_authenticated():
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
                 has_fav = True
         all_teacher = course_org.teacher_set.all()
-        return render(request, 'org-detail-teachers.html',{
+        return render(request, 'org-detail-teachers.html', {
             "all_teacher": all_teacher,
             "course_org": course_org,
             "current_page": current_page,
@@ -183,4 +189,66 @@ class AddFavView(View):
 
             else:
                 return HttpResponse('{"status":"fail","msg": "收藏出错"}', content_type='application/json')
+
+class TeacherListView(View):
+    def get(self, request):
+        all_teachers = Teacher.objects.all()
+
+        search_keywords = request.GET.get('keywords', "")
+        if search_keywords:
+            all_teachers = all_teachers.filter(Q(name__icontains=search_keywords)|
+                                                Q(work_company__icontains=search_keywords)|
+                                                Q(work_position__icontains=search_keywords))
+        # 排序
+        sort = request.GET.get('sort', "")
+        if sort:
+            if sort == "hot":
+                all_teachers = all_teachers.order_by("-click_nums")
+
+        sorted_teacher = Teacher.objects.all().order_by("-click_nums")[:3]
+
+
+        # 对讲师进行分页
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(all_teachers, 5, request=request)
+
+        teachers = p.page(page)
+        return render(request, "teachers-list.html", {
+            "all_teachers": teachers,
+            "sorted_teacher": sorted_teacher,
+            "sort": sort,
+        })
+
+
+class TeacherDetailView(View):
+    def get(self, request, teacher_id):
+        teacher = Teacher.objects.get(id=int(teacher_id))
+        teacher.click_nums +=1
+        teacher.save()
+        all_courses = Course.objects.filter(teacher=teacher)
+
+        has_teacher_faved = False
+        if UserFavorite.objects.filter(user=request.user, fav_type=3, fav_id=teacher.id):
+            has_teacher_faved = True
+
+        has_org_faved = False
+        if UserFavorite.objects.filter(user=request.user, fav_type=2, fav_id=teacher.org.id):
+            has_org_faved = True
+
+
+
+        sorted_teacher = Teacher.objects.all().order_by("-click_nums")[:3]
+
+        return render(request, "teacher-detail.html", {
+            "teacher": teacher,
+            "all_courses": all_courses,
+            "sorted_teacher": sorted_teacher,
+            "has_teacher_faved": has_teacher_faved,
+            "has_org_faved": has_org_faved,
+
+        })
 

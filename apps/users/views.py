@@ -9,8 +9,10 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from .models import UserProfile, EmailVerifyRecord
-from .forms import LoginFrom, RegisterForm, ForgetForm, ModifyPwdForm
+from .forms import LoginFrom, RegisterForm, ForgetForm, ModifyPwdForm, UpLoadImageFrom
 from utils.email_send import send_register_mail
+from utils.mixin_utils import LoginRequiredMixin
+
 
 # Create your views here.
 
@@ -128,3 +130,22 @@ class ForgetPwdView(View):
             return render(request, "send_success.html")
         else:
             return render(request, "forgetpwd.html", {"forget_form": forget_form})
+
+class UserInfoView(LoginRequiredMixin, View):
+    """
+    用户信息
+    """
+    def get(self, request):
+        return render(request, "usercenter-info.html", {
+
+        })
+
+
+class UpLoadView(LoginRequiredMixin, View):
+    """
+    用户修改头像
+    """
+    def post(self, request):
+        image_form = UpLoadImageFrom(request.POST, request.FILES)
+        if image_form.is_valid():
+            pass
