@@ -158,5 +158,8 @@ EMAIL_HOST_PASSWORD = "admin123"
 EMAIL_USE_TIS = False
 EMAIL_FROM = "projectones@sina.com"
 
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')

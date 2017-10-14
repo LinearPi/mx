@@ -2,8 +2,8 @@
 __author__ = 'pizi'
 __data__ = '2017/10/3 11:37'
 from django import forms
-
 from captcha.fields import CaptchaField
+
 from .models import UserProfile
 
 
@@ -28,7 +28,7 @@ class ModifyPwdForm(forms.Form):
     password2 = forms.CharField(required=True, min_length=6)
 
 
-class UpLoadImageFrom(forms.ModelForm):
+class UploadImageForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ['image']
