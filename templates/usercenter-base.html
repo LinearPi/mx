@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                         </div>
-                        <a href="">
+                        <a href="{% url 'users:mymessage' %}">
                             <div class="msg-num"> <span id="MsgNum">{{ request.user.unread_nums }}</span></div>
                         </a>
                     {% else %}
@@ -78,7 +78,7 @@
         <div class="wp">
             <ul  class="crumbs">
                 <li><a href="{% url 'index' %}">首页</a>></li>
-                <li><a href="/user/home/">个人中心</a>></li>
+                <li><a href="{% url 'users:user_info' %}">个人中心</a>></li>
                 <li>个人信息</li>
             </ul>
         </div>
@@ -89,14 +89,10 @@
 	<div class="wp list personal_list">
 	<div class="left">
         <ul>
-            <li class="active2"><a href="usercenter-info.html">个人资料</a></li>
-            <li ><a href="usercenter-mycourse.html">我的课程</a></li>
-            <li ><a href="usercenter-fav-course.html">我的收藏</a></li>
-            <li >
-                <a href="usercenter-message.html" style="position: relative;">
-                    我的消息
-                </a>
-            </li>
+            <li ><a href="{% url 'users:user_info' %}">个人资料</a></li>
+            <li ><a href="{% url 'users:mycourse' %}">我的课程</a></li>
+            <li ><a href="{% url 'users:myfav_org' %}">我的收藏</a></li>
+            <li ><a href="{% url 'users:mymessage' %}" style="position: relative;">我的消息</a></li>
         </ul>
 	</div>
 
@@ -321,6 +317,65 @@
 <script src="{% static 'js/deco-user.js' %}"></script>
 {% block custom_js %}
 
+<script type="text/javascript">
+    $('.jsDeleteFav_course').on('click', function(){
+        var _this = $(this),
+            favid = _this.attr('data-favid');
+        $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url "org:add_fav" %}",
+                data: {
+                    fav_type: 1,
+                    fav_id: favid,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                async: true,
+                success: function(data) {
+                    Dml.fun.winReload();
+                }
+            });
+    });
+
+    $('.jsDeleteFav_teacher').on('click', function(){
+            var _this = $(this),
+                favid = _this.attr('data-favid');
+            $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url "org:add_fav" %}",
+                    data: {
+                        fav_type: 3,
+                        fav_id: favid,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function(data) {
+                        Dml.fun.winReload();
+                    }
+                });
+        });
+
+    $('.jsDeleteFav_org').on('click', function(){
+            var _this = $(this),
+                favid = _this.attr('data-favid');
+            $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url "org:add_fav" %}",
+                    data: {
+                        fav_type: 2,
+                        fav_id: favid,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    async: true,
+                    success: function(data) {
+                        Dml.fun.winReload();
+                    }
+                });
+        });
+</script>
+
 {% endblock %}
 
 
@@ -328,7 +383,6 @@
     $('.jsDeleteFav_course').on('click', function(){
         var _this = $(this),
             favid = _this.attr('data-favid');
-        alert(favid)
         $.ajax({
                 cache: false,
                 type: "POST",
