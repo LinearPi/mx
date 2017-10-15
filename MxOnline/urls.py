@@ -20,7 +20,7 @@ from django.views.generic import TemplateView
 import xadmin
 from django.views.static import serve
 
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView
 
 from MxOnline.settings import MEDIA_ROOT
 
@@ -30,6 +30,7 @@ urlpatterns = [
 
     url('^$', TemplateView.as_view(template_name='index.html'), name='index'),
     url('^login/$', LoginView.as_view(), name='login'),
+    url('^logout/$', LogoutView.as_view(), name='logout'),
     url('^register/$', RegisterView.as_view(), name='register'),
     url('^forget/$', ForgetPwdView.as_view(), name='forget_pwd'),
 

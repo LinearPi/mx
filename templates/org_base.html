@@ -22,9 +22,9 @@
     <header>
 <div  class="header2 header">
 
-    <div class="top">
+            <div class="top">
 				<div class="wp">
-					<div class="fl"><p>服务电话：<b>33333333</b></p></div>
+					<div class="fl"><p>服务电话：<b>82588888</b></p></div>
 					<!--登录后跳转-->
                     {% if request.user.is_authenticated %}
                         <div class="personal">
@@ -42,7 +42,7 @@
                                 </dl>
                                 <div class="btn">
 	                                <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
-	                                <a class="fr" href="">退出</a>
+	                                <a class="fr" href="{% url 'logout' %}">退出</a>
                                 </div>
                             </div>
                         </div>
@@ -55,15 +55,16 @@
                     {% endif %}
 
 				</div>
-			</div>
+            </div>
 
 
     <div class="middle companyheader">
         <div class="wp">
-            <img class="fl" style="width: 112px;height: 103px" src="{{ MEDIA_URL }}{{ course_org.image }}"/>
+            <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}"/></a>
+{#            <img class="fl" style="width: 112px;height: 103px" src="{{ MEDIA_URL }}{{ course_org.image }}"/>#}
             <div class="head fl">
                 <h1>
-                    慕课网
+                    {{ course_org.name }}
                     <img src="{% static 'images/authentication.png' %}"/>
                     <img src="{% static 'images/gold.png' %}"/>
                 </h1>

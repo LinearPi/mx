@@ -20,7 +20,7 @@
 		<div  class=" header">
  			<div class="top">
 				<div class="wp">
-					<div class="fl"><p>服务电话：<b>33333333</b></p></div>
+					<div class="fl"><p>服务电话：<b>82588888</b></p></div>
 					<!--登录后跳转-->
                     {% if request.user.is_authenticated %}
                         <div class="personal">
@@ -38,7 +38,7 @@
                                 </dl>
                                 <div class="btn">
 	                                <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
-	                                <a class="fr" href="">退出</a>
+	                                <a class="fr" href="{% url 'logout' %}">退出</a>
                                 </div>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
 
             <div class="middle">
                 <div class="wp">
-                    <a href="index.html"><img class="fl" src="{% static 'images/logo.jpg' %}"/></a>
+                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}"/></a>
                     <div class="searchbox fr">
                         <div class="selectContainer fl">
                             <span class="selectOption" id="jsSelectOption" data-value="course">

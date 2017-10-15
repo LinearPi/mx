@@ -2,7 +2,7 @@
 import json
 
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
@@ -107,7 +107,6 @@ class RegisterView(View):
             return render(request, "register.html")
 
 
-
 class LoginView(View):
     def get(self, request):
         return render(request, "login.html", {})
@@ -127,6 +126,16 @@ class LoginView(View):
                 return render(request, "login.html", {"msg": "用户名或密码错误！"})
         else:
             return render(request, "login.html", {"login_form": login_form})
+
+
+
+class LogoutView(View):
+    # 用户登出
+    def get(self, request):
+        logout(request)
+        from django.core.urlresolvers import reverse
+        return HttpResponseRedirect(reverse("index"))
+
 
 
 class ForgetPwdView(View):
@@ -277,6 +286,11 @@ class MymessageView(LoginRequiredMixin, View):
     # 我的消息
     def get(self, request):
         all_messages = UserMessage.objects.filter(user=request.user.id)
+        # 用户进入跟个人未读消息后清空
+        all_unread_messages = UserMessage.objects.filter(user=request.user.id, has_read=False)
+        for unread_message in all_unread_messages:
+            unread_message.has_read = True
+            unread_message.save()
         # 对我的消息进行分页
 
         try:

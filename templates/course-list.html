@@ -6,7 +6,7 @@
     <section>
         <div class="wp">
             <ul  class="crumbs">
-                <li><a href="index.html">首页</a>></li>
+                <li><a href="{% url 'index' %}">首页</a>></li>
                 <li>公开课</li>
 
             </ul>
@@ -46,8 +46,7 @@
                                 </div>
                                 <div class="bottom">
                                     <a href="{% url 'course:course_detail' course.id %}"><span class="fl">来自{{ course.course_org }}</span></a>
-                                    <span class="star fr  notlogin
-                                        " data-favid="15">
+                                    <span class="star fr  notlogin" data-favid="15">
                                         {{ course.fav_nums }}
                                     </span>
                                 </div>
