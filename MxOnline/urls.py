@@ -20,15 +20,15 @@ from django.views.generic import TemplateView
 import xadmin
 from django.views.static import serve
 
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView, IndexView
 
-from MxOnline.settings import MEDIA_ROOT
+from MxOnline.settings import MEDIA_ROOT,STATIC_ROOT
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^xadmin/', xadmin.site.urls),
 
-    url('^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    url('^$', IndexView.as_view(), name='index'),
     url('^login/$', LoginView.as_view(), name='login'),
     url('^logout/$', LogoutView.as_view(), name='logout'),
     url('^register/$', RegisterView.as_view(), name='register'),
@@ -49,6 +49,14 @@ urlpatterns = [
     # 课程个人url配置
     url(r'^users/', include('users.urls', namespace="users")),
 
+    # 配置静态文件上传
+    url(r'^static/(?P<path>.*)$', serve, {"document_root":STATIC_ROOT}),
+
     # 配置上传
     url(r'^media/(?P<path>.*)$', serve, {"document_root":MEDIA_ROOT}),
 ]
+
+
+# 全局404
+handler404 = 'users.views.page_not_found'
+handler500 = 'users.views.page_error'
