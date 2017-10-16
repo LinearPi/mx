@@ -22,7 +22,7 @@ from django.views.static import serve
 
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetView, ModifyPwdView, LogoutView, IndexView
 
-from MxOnline.settings import MEDIA_ROOT,STATIC_ROOT
+from MxOnline.settings import MEDIA_ROOT
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -50,7 +50,7 @@ urlpatterns = [
     url(r'^users/', include('users.urls', namespace="users")),
 
     # 配置静态文件上传
-    url(r'^static/(?P<path>.*)$', serve, {"document_root":STATIC_ROOT}),
+    # url(r'^static/(?P<path>.*)$', serve, {"document_root":STATIC_ROOT}),
 
     # 配置上传
     url(r'^media/(?P<path>.*)$', serve, {"document_root":MEDIA_ROOT}),

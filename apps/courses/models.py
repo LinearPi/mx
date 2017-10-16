@@ -45,10 +45,15 @@ class Course(models.Model):
         # 获取课程章节
         return self.lesson_set.all()
 
-
-
     def __str__(self):
         return self.name
+
+
+class BannerCourse(Course):
+    class Meta:
+        verbose_name = u"轮播课程"
+        verbose_name_plural = verbose_name
+        proxy = True
 
 # 章节信息
 
