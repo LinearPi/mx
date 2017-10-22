@@ -154,11 +154,13 @@ class OrgTeacherView(View):
             if UserFavorite.objects.filter(user=request.user, fav_id=course_org.id, fav_type=2):
                 has_fav = True
         all_teacher = course_org.teacher_set.all()
+        # teacher_count = all_teacher.count(self)
         return render(request, 'org-detail-teachers.html', {
             "all_teacher": all_teacher,
             "course_org": course_org,
             "current_page": current_page,
             "has_fav": has_fav,
+            # "teacher_count": teacher_count,
 
         })
 

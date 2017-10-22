@@ -17,6 +17,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6.1 virtualenv at C:\Users\pizi\django_basic_venv" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="movie" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
