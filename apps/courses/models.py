@@ -22,11 +22,11 @@ class Course(models.Model):
     fav_nums = models.IntegerField(default=0, verbose_name=u'收藏人数')
     image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u'封面图', max_length=100, null=True, blank=True)
     click_nums = models.IntegerField(default=0, verbose_name=u'点击数', null=True, blank=True)
-    category = models.CharField(max_length=20, verbose_name=u'课程类别', default=u'后端开发')
+    category = models.CharField(max_length=20, verbose_name=u'课程类别', default=u'后端开发',null=True, blank=True)
     tag = models.CharField(default='', verbose_name=u'课程标签', max_length=10)
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u'添加时间')
-    need_know = models.CharField(max_length=300, verbose_name=u'课程须知', default=u'')
-    tell_you = models.CharField(max_length=300, verbose_name=u'老师告诉你', default=u'')
+    need_know = models.CharField(max_length=300, verbose_name=u'课程须知', default=u'', null=True, blank=True)
+    tell_you = models.CharField(max_length=300, verbose_name=u'老师告诉你', default=u'', null=True, blank=True)
 
 
     class Meta:

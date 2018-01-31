@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'courses',
     'organization',
     'operation',
-    'xadmin',
+    'xadmin',   
     'crispy_forms',
     'captcha',
     'pure_pagination'
