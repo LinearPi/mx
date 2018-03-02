@@ -20,6 +20,9 @@
     <orderEntry type="module" module-name="movie" />
     <orderEntry type="module" module-name="source" />
     <orderEntry type="module" module-name="lession" />
+    <orderEntry type="module" module-name="blog_project" />
+    <orderEntry type="module" module-name="udacity_rss" />
+    <orderEntry type="module" module-name="udacity_rss" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
